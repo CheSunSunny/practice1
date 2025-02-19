@@ -31,7 +31,7 @@ sleep(1)
 
 uniq_links = set()
 for i in links:
-  uniq_links.add(i.get_attribute("href"))
+    uniq_links.add(i.get_attribute("href"))
 
 print(len(uniq_links))  # столько фильмов на одной станице
 
@@ -39,8 +39,8 @@ sleep(1)
 movies = driver.find_elements('xpath', "//h3[contains(@class, 'ipc-title__text')]")
 uniq_movies = set()
 for i in movies:
-  if i.text[0].isdigit():
-    uniq_movies.add(i.text.split(" ", maxsplit=1)[1])
+    if i.text[0].isdigit():
+        uniq_movies.add(i.text.split(" ", maxsplit=1)[1])
 
 print(len(uniq_movies))  # столько фильмов на одной станице
 print(uniq_movies)
