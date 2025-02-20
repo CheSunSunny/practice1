@@ -13,7 +13,6 @@ sys.path.insert(0,'/usr/lib/chromium-browser/chromedriver')
 
 chrome_options = webdriver.ChromeOptions()
 chrome_options.add_argument('--verbose')
-chrome_options.add_argument('--headless')
 chrome_options.add_argument('--no-sandbox')
 chrome_options.add_argument('--disable-gpu')
 chrome_options.add_argument('--window-size=1920, 1200')
@@ -26,14 +25,14 @@ driver = webdriver.Chrome(options=chrome_options)
 driver.get("https://www.imdb.com/chart/top/")
 
 links = driver.find_elements('xpath', "//a[contains(@class, 'ipc-title-link-wrapper')]")
-print(links)
+print("ссылки со страницы: ", links)
 sleep(1)
 
 uniq_links = set()
 for i in links:
     uniq_links.add(i.get_attribute("href"))
 
-print(len(uniq_links))  # столько фильмов на одной станице
+print(len(uniq_links), "фильмов на одной странице")  # столько фильмов на одной странице
 
 sleep(1)
 movies = driver.find_elements('xpath', "//h3[contains(@class, 'ipc-title__text')]")
@@ -42,10 +41,10 @@ for i in movies:
     if i.text[0].isdigit():
         uniq_movies.add(i.text.split(" ", maxsplit=1)[1])
 
-print(len(uniq_movies))  # столько фильмов на одной станице
-print(uniq_movies)
+print(len(uniq_movies), "фильмов на одной странице")  # столько фильмов на одной станице
+print("уникальные фильмы: ", uniq_movies)
 
-len(uniq_movies)
+print(len(uniq_movies), "фильмов на одной странице")
 
 data = {}
 for link in uniq_links:
@@ -66,5 +65,5 @@ for link in uniq_links:
             print(title, current_movie)
     sleep(1)  # нужен таймаут, чтобы драйвер успел перейти на новую страницу
 
-print(data)
-print(len(data))
+print("полученные данные: ", data)
+print("количество данных: ", len(data))
