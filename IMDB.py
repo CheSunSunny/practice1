@@ -7,6 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import chromedriver_autoinstaller
 
 from time import sleep
+import json
 
 
 sys.path.insert(0,'/usr/lib/chromium-browser/chromedriver')
@@ -32,7 +33,7 @@ uniq_links = set()
 for i in links:
     uniq_links.add(i.get_attribute("href"))
 
-print(len(uniq_links), "фильмов на одной странице")  # столько фильмов на одной странице
+print(len(uniq_links), "ссылок на одной странице")  # столько фильмов на одной странице
 
 sleep(1)
 movies = driver.find_elements('xpath', "//h3[contains(@class, 'ipc-title__text')]")
@@ -41,10 +42,8 @@ for i in movies:
     if i.text[0].isdigit():
         uniq_movies.add(i.text.split(" ", maxsplit=1)[1])
 
-print(len(uniq_movies), "фильмов на одной странице")  # столько фильмов на одной станице
+print(len(uniq_movies), "фильмов на одной странице")  # столько фильмов на одной странице
 print("уникальные фильмы: ", uniq_movies)
-
-print(len(uniq_movies), "фильмов на одной странице")
 
 data = {}
 for link in uniq_links:
@@ -55,15 +54,25 @@ for link in uniq_links:
         pass
     else:
         if title in uniq_movies:
-            synopsis = driver.find_element('xpath', "//span[contains(@data-testid, 'plot-xs_to_m')]").text
+            synopsis = driver.find_element('xpath', "//p[contains(@data-testid, 'plot')]").text
             rating = driver.find_element('xpath', "//span[contains(@class, 'sc-d541859f-1 imUuxf')]").text
+            year = driver.find_element('xpath', "//a[contains(@href, 'releaseinfo')]").text
+            genre = driver.find_element('xpath', "//div[contains(@class, 'ipc-chip-list__scroller')]").text
+            director = driver.find_element('xpath', "//a[contains(@href, 'name')]").text
             current_movie = {}
+            current_movie["year"] = year
+            current_movie["genre"] = genre
             current_movie["synopsis"] = synopsis
+            current_movie["director"] = director
             current_movie["rating"] = rating
             current_movie["link"] = link
+
+
             data[title] = current_movie
-            print(title, current_movie)
     sleep(1)  # нужен таймаут, чтобы драйвер успел перейти на новую страницу
 
 print("полученные данные: ", data)
 print("количество данных: ", len(data))
+
+with open("imdb_data.json", "w", encoding="utf-8") as f:
+    json.dump(data, f, ensure_ascii=False, indent=4)
